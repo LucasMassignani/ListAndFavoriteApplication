@@ -1,0 +1,19 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "Here put your DB username",
+  "password": "Here put your DB password",
+  "database": "desafio-growth-hackers",
+  "synchronize": true,
+  "logging": false,
+  "entities": [
+    "src/modules/**/infra/typeorm/entities/*.ts"
+  ],
+  "migrations": [
+    "src/shared/infra/typeorm/migrations/**/*.ts"
+  ],
+  "cli": {
+    "migrationsDir": "src/shared/infra/typeorm/migrations"
+  }
+}
