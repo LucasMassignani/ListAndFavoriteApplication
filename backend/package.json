@@ -1,5 +1,5 @@
 {
-  "name": "growth_hackers_backend",
+  "name": "growth-hackers-backend",
   "version": "1.0.0",
   "main": "src/shared/infra/server.ts",
   "license": "MIT",
