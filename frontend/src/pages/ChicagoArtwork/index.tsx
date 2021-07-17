@@ -55,7 +55,7 @@ const ChicagoArtwork: React.FC = () => {
         setDynamicFilter({});
         setTotalPages(0);
         setLoading(false);
-        toast.error('Error trying to get the artworks');
+        toast.error('Error trying to get the artworks!');
       }
     }
 

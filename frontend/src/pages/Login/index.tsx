@@ -19,7 +19,7 @@ const Login: React.FC = () => {
         await signIn(data);
         toast.success('You have successfully logged in!');
 
-        history.push('/profile');
+        history.push('/');
       } catch (error) {
         if (
           error.response &&

@@ -5,6 +5,7 @@ import Route from './Route';
 import Home from '../pages/Home';
 import ChicagoArtwork from '../pages/ChicagoArtwork';
 import Login from '../pages/Login';
+import Profile from '../pages/Profile';
 import SignIn from '../pages/SignIn';
 
 const Routes: React.FC = () => {
@@ -14,7 +15,7 @@ const Routes: React.FC = () => {
       <Route path="/art-institute-chicago" exact component={ChicagoArtwork} />
       <Route path="/login" exact component={Login} isNotPrivate />
       <Route path="/signin" exact component={SignIn} isNotPrivate />
-      {/* <Route path="/profile" component={Profile} isPrivate /> */}
+      <Route path="/profile" component={Profile} isPrivate />
       {/* <Route path="/favorite" component={Dashboard} isPrivate /> */}
     </Switch>
   );
