@@ -48,3 +48,8 @@ export const ContentContainer = styled.div`
   display: flex;
   justify-content: center;
 `;
+
+export const ButtonLogout = styled.button`
+  background: none;
+  border: 0;
+`;

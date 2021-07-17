@@ -9,11 +9,13 @@ import useAuth from '../hooks/auth/useAuth';
 
 interface IRouteProps extends ReactDOMRouteProps {
   isPrivate?: boolean;
+  isNotPrivate?: boolean;
   component: React.ComponentType;
 }
 
 const Route: React.FC<IRouteProps> = ({
   isPrivate = false,
+  isNotPrivate = false,
   component: Component,
   ...rest
 }) => {
@@ -21,6 +23,10 @@ const Route: React.FC<IRouteProps> = ({
 
   if (isPrivate && !user) {
     return <Redirect to="/login" />;
+  }
+
+  if (isNotPrivate && user) {
+    return <Redirect to="/" />;
   }
 
   return (

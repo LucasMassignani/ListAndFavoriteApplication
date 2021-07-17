@@ -4,19 +4,22 @@ import { toast } from 'react-toastify';
 import { Link, useHistory } from 'react-router-dom';
 
 import { ButtonsContainer, Container } from './styles';
-import api from '../../services/api';
+import useAuth from '../../hooks/auth/useAuth';
 
-const SignIn: React.FC = () => {
+const Login: React.FC = () => {
   const history = useHistory();
+  const { signIn } = useAuth();
+
   const [loading, setLoading] = useState(false);
 
   const handleFinish = useCallback(
     async (data) => {
       setLoading(true);
       try {
-        await api.post('users', data);
-        toast.success('User created with success!');
-        history.push('login');
+        await signIn(data);
+        toast.success('You have successfully logged in!');
+
+        history.push('/profile');
       } catch (error) {
         if (
           error.response &&
@@ -25,26 +28,18 @@ const SignIn: React.FC = () => {
         ) {
           toast.error(error.response.data.message);
         } else {
-          toast.error('Error trying to create account!');
+          toast.error('Error trying to login!');
         }
         setLoading(false);
       }
     },
-    [history],
+    [history, signIn],
   );
 
   return (
     <Container>
-      <h2>Create Account</h2>
+      <h2>Login</h2>
       <Form layout="vertical" onFinish={handleFinish}>
-        <Form.Item
-          label="Name"
-          name="name"
-          rules={[{ required: true, message: 'Please input your name!' }]}
-        >
-          <Input />
-        </Form.Item>
-
         <Form.Item
           label="E-mail"
           name="email"
@@ -70,9 +65,9 @@ const SignIn: React.FC = () => {
         <Form.Item>
           <ButtonsContainer>
             <Button type="primary" htmlType="submit" loading={loading}>
-              Create Account
+              Login
             </Button>
-            <Link to="login">Already have an account? Click here!</Link>
+            <Link to="signin">Do not have an account? Click here!</Link>
           </ButtonsContainer>
         </Form.Item>
       </Form>
@@ -80,4 +75,4 @@ const SignIn: React.FC = () => {
   );
 };
 
-export default SignIn;
+export default Login;
