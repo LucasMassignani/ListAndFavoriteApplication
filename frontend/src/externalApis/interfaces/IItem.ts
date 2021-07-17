@@ -3,4 +3,5 @@ export default interface IItem {
   apiType: string;
   title: string;
   imageUrl: string;
+  imagePreview?: string;
 }

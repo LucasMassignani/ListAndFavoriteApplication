@@ -5,8 +5,6 @@ import {
   Container,
   Header,
   UserButtonsContainer,
-  SearchArtContainer,
-  TitleAndSearchContainer,
   ContentContainer,
 } from './styles';
 
@@ -14,15 +12,12 @@ const Layout: React.FC = ({ children }) => {
   return (
     <Container>
       <Header>
-        <TitleAndSearchContainer>
-          <h1>My Favorite Arts</h1>
-          <SearchArtContainer>
-            <input type="text" />
-          </SearchArtContainer>
-        </TitleAndSearchContainer>
+        <h1>
+          <Link to="/"> My Favorite Arts</Link>
+        </h1>
         <UserButtonsContainer>
-          <Link to="singin">Login</Link>
-          <Link to="singup">Sing Up</Link>
+          <Link to="login">Login</Link>
+          <Link to="signin">Sign In</Link>
         </UserButtonsContainer>
       </Header>
       <ContentContainer>{children}</ContentContainer>

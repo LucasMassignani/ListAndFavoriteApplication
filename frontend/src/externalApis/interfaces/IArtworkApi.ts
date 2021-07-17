@@ -1,6 +1,6 @@
-import IItem from './IItem';
+import IGetItemListReturn from './IGetItemListReturn';
 import IOptions from './IOptions';
 
 export default interface IArtworkApi {
-  getItemList(options: IOptions): Promise<Array<IItem>>;
+  getItemList(options: IOptions): Promise<IGetItemListReturn>;
 }

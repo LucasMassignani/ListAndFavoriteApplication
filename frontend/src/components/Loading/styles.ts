@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  img {
-    object-fit: cover;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

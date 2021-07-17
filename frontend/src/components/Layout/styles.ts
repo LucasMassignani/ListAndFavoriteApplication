@@ -12,7 +12,7 @@ export const Header = styled.div`
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   flex-wrap: wrap;
   padding: 5px 30px;
   background-color: #840c0c;
@@ -21,32 +21,16 @@ export const Header = styled.div`
     margin: 0;
     font-size: 30px;
     color: #fff;
-  }
-`;
 
-export const TitleAndSearchContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start;
-  flex: 1;
+    a {
+      text-decoration: inherit;
+      color: inherit;
+      cursor: pointer;
+    }
+  }
 
   @media only screen and (max-width: 747px) {
     justify-content: center;
-  }
-`;
-
-export const SearchArtContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  > input {
-    padding: 3px;
-    width: 300px;
-    color: #000;
-    border: 1px solid #000;
-    border-radius: 5px;
-    margin-left: 15px;
   }
 `;
 

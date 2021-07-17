@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import ArtworkList from '../../components/ArtworkList';
+import CardList from '../../components/CardList';
 import ArtInstituteChicagoApi from '../../externalApis/ArtInstituteChicagoApi';
 import IItem from '../../externalApis/interfaces/IItem';
 
 import { Container } from './styles';
 
 const Home: React.FC = () => {
+  const [loadingChicagoArtwork, setLoadingChicagoArtwork] = useState(true);
   const [listChicagoArtwork, setListChicagoArtwork] = useState<IItem[]>([]);
 
   useEffect(() => {
     async function findArtwork(): Promise<void> {
-      const list = await ArtInstituteChicagoApi.getItemList({
+      const response = await ArtInstituteChicagoApi.getItemList({
         limit: 3,
         page: 1,
       });
-      setListChicagoArtwork(list);
+      setListChicagoArtwork(response.list);
+      setLoadingChicagoArtwork(false);
     }
 
     findArtwork();
@@ -22,10 +24,11 @@ const Home: React.FC = () => {
 
   return (
     <Container>
-      <ArtworkList
-        title="Search by Art Institute of Chicago"
+      <CardList
+        title="Art Institute of Chicago"
         pathToAll="art-institute-chicago"
-        artworkList={listChicagoArtwork}
+        loading={loadingChicagoArtwork}
+        itemList={listChicagoArtwork}
       />
     </Container>
   );

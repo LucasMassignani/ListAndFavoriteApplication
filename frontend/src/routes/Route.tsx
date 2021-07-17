@@ -19,21 +19,18 @@ const Route: React.FC<IRouteProps> = ({
 }) => {
   const { user } = useAuth();
 
+  if (isPrivate && !user) {
+    return <Redirect to="/login" />;
+  }
+
   return (
     <ReactDomRoute
       {...rest}
-      render={({ location }) => {
-        return isPrivate === !!user ? (
+      render={() => {
+        return (
           <Layout>
             <Component />
           </Layout>
-        ) : (
-          <Redirect
-            to={{
-              pathname: isPrivate ? '/singin' : '/',
-              state: { from: location },
-            }}
-          />
         );
       }}
     />
