@@ -20,6 +20,7 @@ module.exports = {
     'prettier/prettier': 'error',
     'class-methods-use-this': 'off',
     'no-useless-constructor': 'off',
+    'no-duplicate-imports': 'error',
     '@typescript-eslint/naming-convention': [
       'error',
       {
