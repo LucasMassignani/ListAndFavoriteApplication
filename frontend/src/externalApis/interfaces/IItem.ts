@@ -1,7 +1,8 @@
 export default interface IItem {
-  id: string;
-  apiType: string;
+  id?: string;
+  original_id: string;
+  api_type: string;
   title: string;
-  imageUrl: string;
-  imagePreview?: string;
+  image_url: string;
+  image_preview?: string;
 }

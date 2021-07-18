@@ -7,6 +7,7 @@ import ChicagoArtwork from '../pages/ChicagoArtwork';
 import Login from '../pages/Login';
 import Profile from '../pages/Profile';
 import SignIn from '../pages/SignIn';
+import Favorite from '../pages/Favorite';
 
 const Routes: React.FC = () => {
   return (
@@ -16,7 +17,7 @@ const Routes: React.FC = () => {
       <Route path="/login" exact component={Login} isNotPrivate />
       <Route path="/signin" exact component={SignIn} isNotPrivate />
       <Route path="/profile" component={Profile} isPrivate />
-      {/* <Route path="/favorite" component={Dashboard} isPrivate /> */}
+      <Route path="/favorite" component={Favorite} isPrivate />
     </Switch>
   );
 };

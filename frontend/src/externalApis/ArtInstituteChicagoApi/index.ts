@@ -220,11 +220,11 @@ class ArtInstituteChicagoApi implements IArtworkApi {
           }
 
           return {
-            id: artwork.data.image_id,
+            original_id: artwork.data.image_id,
             title: artwork.data.title,
-            imageUrl: `https://www.artic.edu/iiif/2/${artwork.data.image_id}/full/843,/0/default.jpg`,
-            imagePreview: artwork.data?.thumbnail?.lqip || '',
-            apiType: this.apiType,
+            image_url: `https://www.artic.edu/iiif/2/${artwork.data.image_id}/full/843,/0/default.jpg`,
+            image_preview: artwork.data?.thumbnail?.lqip || '',
+            api_type: this.apiType,
           };
         } catch (error) {
           if (
@@ -233,11 +233,11 @@ class ArtInstituteChicagoApi implements IArtworkApi {
             error.response.status === 404
           ) {
             return {
-              id: String(index),
+              original_id: String(index),
               title: '',
-              imageUrl: '',
-              imagePreview: '',
-              apiType: this.apiType,
+              image_url: '',
+              image_preview: '',
+              api_type: this.apiType,
             };
           }
           throw error;

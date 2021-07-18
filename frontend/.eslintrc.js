@@ -37,7 +37,6 @@ module.exports = {
     'react/prop-types': 'off',
     'no-unused-expressions': 'off',
     '@typescript-eslint/camelcase': 'off',
-    'import/no-duplicates': 'off',
     'no-duplicate-imports': 'error',
     '@typescript-eslint/naming-convention': [
       'error',

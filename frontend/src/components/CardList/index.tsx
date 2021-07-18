@@ -33,8 +33,9 @@ const CardList: React.FC<ICardList> = ({
             <CustomEmpty />
           ) : (
             itemList.map((item) => {
+              const md = itemList.length === 2 ? 12 : 8;
               return (
-                <Col key={item.id} xs={24} sm={12} md={8}>
+                <Col key={item.original_id} xs={24} sm={12} md={md}>
                   <Card item={item} />
                 </Col>
               );

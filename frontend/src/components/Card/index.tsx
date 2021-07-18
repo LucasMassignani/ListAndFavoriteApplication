@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Image } from 'antd';
 
 import {
@@ -8,9 +8,15 @@ import {
   FavoriteButton,
 } from './styles';
 import IItem from '../../externalApis/interfaces/IItem';
+import { toast } from 'react-toastify';
+import api from '../../services/api';
+import useAuth from '../../hooks/auth/useAuth';
 
 interface ICard {
   item: IItem;
+}
+interface IFavorite {
+  item_id: string;
 }
 
 const FALLBACK_IMAGE =
@@ -20,18 +26,66 @@ const DEFAULT_PREVIEW_IMAGE =
   'data:image/gif;base64,R0lGODlhAQABAIAAAP7//wAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==';
 
 const Card: React.FC<ICard> = ({ item }) => {
+  const { user } = useAuth();
+  const [favorite, setFavorite] = useState<IFavorite | null>(null);
+
+  useEffect(() => {
+    async function checkIfIsFavorite(): Promise<void> {
+      if (user) {
+        try {
+          const response = await api.get(
+            `favorite-check/${item.original_id}/${item.api_type}`,
+          );
+          setFavorite(response.data || null);
+        } catch (error) {
+          if (error.response && error.response.message) {
+            toast.error(error.response.message);
+          }
+          setFavorite(null);
+        }
+      }
+    }
+    checkIfIsFavorite();
+  }, [item.api_type, item.original_id, user]);
+
+  const handleClickFavorite = useCallback(async () => {
+    try {
+      if (!favorite?.item_id) {
+        const response = await api.post('favorites', {
+          item: {
+            api_type: item.api_type,
+            image_preview: item.image_preview,
+            image_url: item.image_url,
+            original_id: item.original_id,
+            title: item.title,
+          },
+        });
+        setFavorite(response.data);
+      } else {
+        await api.delete(`favorites/${favorite.item_id}`);
+        setFavorite(null);
+      }
+    } catch (error) {
+      if (error.response && error.response.message) {
+        toast.error(error.response.message);
+      } else {
+        toast.error('Erro trying to add or remove item from favorite!');
+      }
+    }
+  }, [favorite, item]);
+
   return (
     <Container>
       <Image
         width={200}
         height={200}
-        src={item.imageUrl}
+        src={item.image_url}
         alt={item.title}
         fallback={FALLBACK_IMAGE}
         placeholder={
           <Image
             preview={false}
-            src={item?.imagePreview || DEFAULT_PREVIEW_IMAGE}
+            src={item?.image_preview || DEFAULT_PREVIEW_IMAGE}
             width={200}
             height={200}
           />
@@ -39,7 +93,9 @@ const Card: React.FC<ICard> = ({ item }) => {
       />
       <ButtonContainer>
         <DetailsButton>Details</DetailsButton>
-        <FavoriteButton>Favorite</FavoriteButton>
+        <FavoriteButton onClick={handleClickFavorite}>
+          {favorite ? 'Unfavorite' : 'Favorite'}
+        </FavoriteButton>
       </ButtonContainer>
     </Container>
   );
