@@ -4,13 +4,9 @@ import IFavoritesRepository from '@modules/favorites/repositories/IFavoritesRepo
 import ICreateFavoriteDTO from '@modules/favorites/dtos/ICreateFavoriteDTO';
 
 import Favorite from '../../infra/typeorm/entities/Favorite';
-
+import Filter from '@modules/filters/infra/typeorm/entities/Filter';
 class FakeFavoritesRepository implements IFavoritesRepository {
   private favorites: Favorite[] = [];
-
-  public async findAllUserFavorite(user_id: string): Promise<Favorite[]> {
-    return this.favorites.filter(favorite => favorite.user_id === user_id);
-  }
 
   public async findByUserIdAndItemId(
     user_id: string,
@@ -19,6 +15,10 @@ class FakeFavoritesRepository implements IFavoritesRepository {
     return this.favorites.find(
       favorite => favorite.user_id === user_id && favorite.item_id === item_id,
     );
+  }
+
+  public async findAllUserFilters(): Promise<Filter[]> {
+    return [];
   }
 
   public async create(favoriteData: ICreateFavoriteDTO): Promise<Favorite> {

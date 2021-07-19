@@ -4,7 +4,7 @@ import IDynamicFilter from '../../externalApis/interfaces/IDynamicFilter';
 import SelectBool from '../SelectBool';
 import SelectTextList from '../SelectTextList';
 import IFilterValue from '../../externalApis/interfaces/IFilterValue';
-import SelectSort from '../SelectSort';
+import Select from '../Select';
 import Modal from 'antd/lib/modal/Modal';
 import { FooterContainer } from './styles';
 
@@ -13,6 +13,7 @@ interface IFilter {
   visible: boolean;
   onClose: () => void;
   onSubmit: (data: IFilterValue[]) => void;
+  onClear: () => void;
 }
 
 const Filter: React.FC<IFilter> = ({
@@ -20,6 +21,7 @@ const Filter: React.FC<IFilter> = ({
   visible,
   onClose,
   onSubmit,
+  onClear,
 }) => {
   const formRef = useRef<FormInstance>(null);
 
@@ -45,6 +47,10 @@ const Filter: React.FC<IFilter> = ({
     }
   }, []);
 
+  const handleClickClear = useCallback(() => {
+    onClear();
+  }, [onClear]);
+
   return (
     <Modal
       title="Filter"
@@ -53,6 +59,9 @@ const Filter: React.FC<IFilter> = ({
       footer={
         <FooterContainer>
           <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={handleClickClear} type="default">
+            Clear
+          </Button>
           <Button onClick={handleClickSubmit} type="primary">
             Submit
           </Button>
@@ -83,13 +92,14 @@ const Filter: React.FC<IFilter> = ({
                 </Col>
               );
             }
-            if (filter.type === 'sort') {
+            if (filter.type === 'sort' || filter.type === 'select') {
               return (
                 <Col key={filter.name} xs={24} sm={24} md={12} lg={12} xl={12}>
-                  <SelectSort filter={filter} />
+                  <Select filter={filter} />
                 </Col>
               );
             }
+
             console.error(
               'Invalid type for dynamicFilter. Check this externalApi dynamicFilter!',
             );

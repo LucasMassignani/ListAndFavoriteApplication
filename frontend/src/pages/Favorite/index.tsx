@@ -11,6 +11,8 @@ import IDynamicFilter from '../../externalApis/interfaces/IDynamicFilter';
 import IFilterValue from '../../externalApis/interfaces/IFilterValue';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
+import ArtInstituteChicagoApi from '../../externalApis/ArtInstituteChicagoApi';
+import StoreApi from '../../externalApis/StoreApi';
 
 const Favorite: React.FC = () => {
   const history = useHistory();
@@ -20,8 +22,8 @@ const Favorite: React.FC = () => {
   const [listFilterValue, setListFilterValue] = useState<IFilterValue[]>([]);
   const [dynamicFilter, setDynamicFilter] = useState<IDynamicFilter>({});
   const [loading, setLoading] = useState(true);
-  const [totalPages, setTotalPages] = useState<number>(24);
-  const [page, setPage] = useState<number>(0);
+  const [totalRegisters, setTotalRegisters] = useState<number>(1);
+  const [page, setPage] = useState<number>(1);
   const [itemList, setItemList] = useState<IItem[]>([]);
 
   useEffect(() => {
@@ -41,26 +43,60 @@ const Favorite: React.FC = () => {
   useEffect(() => {
     async function findFavorite(): Promise<void> {
       try {
-        const response = await api.get('favorites');
-        // ({
-        //   limit: 21,
-        //   page,
-        //   listFilterValue,
-        // });
-        setItemList(
-          response.data.map((favorite: any) => {
-            return favorite.item;
+        const [favoriteResponse, filterResponse] = await Promise.all([
+          api.get('favorites', {
+            params: {
+              limit: 21,
+              page,
+              listFilterValue: JSON.stringify(listFilterValue),
+            },
           }),
+          api.get('filters'),
+        ]);
+
+        const chicagoFilters = ArtInstituteChicagoApi.getDynamicFilter();
+        const storeFilters = StoreApi.getDynamicFilter();
+
+        const newDynamicFilter = Object.keys(filterResponse.data).reduce(
+          (acc: IDynamicFilter, key) => {
+            const filter = filterResponse.data[key];
+            const chicagoFilter = chicagoFilters[key];
+            const storeFilter = storeFilters[key];
+
+            if (chicagoFilter) {
+              if (chicagoFilter.type === 'textList') {
+                chicagoFilter.recommendedOptions = filter.values;
+              }
+              acc[key] = chicagoFilter;
+            }
+
+            if (storeFilter) {
+              if (storeFilter.type === 'select') {
+                storeFilter.options = filter.values.map((value: string) => {
+                  return {
+                    label: value,
+                    value: value,
+                  };
+                });
+              }
+              acc[key] = storeFilter;
+            }
+            return acc;
+          },
+          {} as IDynamicFilter,
         );
-        // setDynamicFilter(response.filter);
-        setTotalPages(20);
+
+        setItemList(favoriteResponse.data.list);
+
+        setDynamicFilter(newDynamicFilter);
+        setTotalRegisters(favoriteResponse.data.pagination.totalRegisters);
         setLoading(false);
       } catch (error) {
         setItemList([]);
         setDynamicFilter({});
-        setTotalPages(0);
+        setTotalRegisters(0);
         setLoading(false);
-        toast.error('Error trying to get the artworks!');
+        toast.error('Error trying to get the favorite list!');
       }
     }
 
@@ -72,7 +108,7 @@ const Favorite: React.FC = () => {
       setLoading(true);
       setItemList([]);
       history.push({
-        pathname: '/art-institute-chicago',
+        pathname: '/favorite',
         search: `?page=${pageNumber}&listFilterValue=${JSON.stringify(
           listFilterValue,
         )}`,
@@ -95,12 +131,22 @@ const Favorite: React.FC = () => {
       setItemList([]);
       setFilterVisible(false);
       history.push({
-        pathname: '/art-institute-chicago',
+        pathname: '/favorite',
         search: `?page=${1}&listFilterValue=${JSON.stringify(data)}`,
       });
     },
     [history],
   );
+
+  const handleClear = useCallback(() => {
+    setLoading(true);
+    setItemList([]);
+    setFilterVisible(false);
+    history.push({
+      pathname: '/favorite',
+      search: `?page=${1}`,
+    });
+  }, [history]);
 
   return (
     <Container>
@@ -114,6 +160,7 @@ const Favorite: React.FC = () => {
         visible={filterVisible}
         onClose={handleCloseFilter}
         onSubmit={handleSubmitFilter}
+        onClear={handleClear}
       />
       <CardList title="Favorites" loading={loading} itemList={itemList} />
 
@@ -125,7 +172,7 @@ const Favorite: React.FC = () => {
         defaultCurrent={1}
         current={page}
         pageSize={21}
-        total={totalPages * 21}
+        total={totalRegisters}
         onChange={handleChangePagination}
       />
     </Container>

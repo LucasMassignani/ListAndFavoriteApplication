@@ -8,6 +8,8 @@ import ItemsRepository from '@modules/items/infra/typeorm/repositories/ItemsRepo
 import IItemsRepository from '@modules/items/repositories/IItemsRepository';
 import IFavoritesRepository from '@modules/favorites/repositories/IFavoritesRepository';
 import FavoritesRepository from '@modules/favorites/infra/typeorm/repositories/FavoritesRepository';
+import FiltersRepository from '@modules/filters/infra/typeorm/repositories/FiltersRepository';
+import IFiltersRepository from '@modules/filters/repositories/IFiltersRepository';
 
 container.registerSingleton<IUsersRepository>(
   'UsersRepository',
@@ -22,4 +24,9 @@ container.registerSingleton<IItemsRepository>(
 container.registerSingleton<IFavoritesRepository>(
   'FavoritesRepository',
   FavoritesRepository,
+);
+
+container.registerSingleton<IFiltersRepository>(
+  'FiltersRepository',
+  FiltersRepository,
 );

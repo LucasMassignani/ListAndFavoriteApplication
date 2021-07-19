@@ -4,7 +4,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import Filter from '../../../../filters/infra/typeorm/entities/Filter';
+import Favorite from '../../../../favorites/infra/typeorm/entities/Favorite';
 
 @Entity('items')
 class Item {
@@ -25,6 +28,12 @@ class Item {
 
   @Column()
   image_preview?: string;
+
+  @OneToMany(() => Favorite, favorite => favorite.item)
+  favorites: Favorite[];
+
+  @OneToMany(() => Filter, filter => filter.item)
+  filters: Filter[];
 
   @CreateDateColumn()
   created_at: Date;

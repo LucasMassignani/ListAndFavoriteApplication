@@ -1,17 +1,18 @@
 import React from 'react';
-import { Select, Form } from 'antd';
+import { Select as SelectAnt, Form } from 'antd';
 import ISort from '../../externalApis/interfaces/FilterTypes/ISort';
+import ISelect from '../../externalApis/interfaces/FilterTypes/ISelect';
 
-const { Option } = Select;
+const { Option } = SelectAnt;
 
-interface ISelectSort {
-  filter: ISort;
+interface ISelectInput {
+  filter: ISort | ISelect;
 }
 
-const SelectSort: React.FC<ISelectSort> = ({ filter }) => {
+const Select: React.FC<ISelectInput> = ({ filter }) => {
   return (
     <Form.Item name={filter.name} label={filter.label}>
-      <Select>
+      <SelectAnt>
         {filter.options.map((option) => {
           return (
             <Option key={option.value} value={option.value}>
@@ -19,9 +20,9 @@ const SelectSort: React.FC<ISelectSort> = ({ filter }) => {
             </Option>
           );
         })}
-      </Select>
+      </SelectAnt>
     </Form.Item>
   );
 };
 
-export default SelectSort;
+export default Select;

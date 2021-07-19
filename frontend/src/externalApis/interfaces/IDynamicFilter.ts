@@ -1,7 +1,5 @@
-import IBool from './FilterTypes/IBool';
-import ISort from './FilterTypes/ISort';
-import ITextList from './FilterTypes/ITextList';
+import IAllFilterTypes from './FilterTypes/IAllFiltersTypes';
 
 export default interface IDynamicFilter {
-  [key: string]: IBool | ITextList | ISort;
+  [key: string]: IAllFilterTypes;
 }

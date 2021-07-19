@@ -4,20 +4,13 @@ import IFavoritesRepository from '@modules/favorites/repositories/IFavoritesRepo
 import ICreateFavoriteDTO from '@modules/favorites/dtos/ICreateFavoriteDTO';
 
 import Favorite from '../entities/Favorite';
+import Filter from '@modules/filters/infra/typeorm/entities/Filter';
 
 class FavoritesRepository implements IFavoritesRepository {
   private ormRepository: Repository<Favorite>;
 
   constructor() {
     this.ormRepository = getRepository(Favorite);
-  }
-
-  public async findAllUserFavorite(user_id: string): Promise<Favorite[]> {
-    const favorites = await this.ormRepository.find({
-      where: { user_id },
-      relations: ['item'],
-    });
-    return favorites;
   }
 
   public async findByUserIdAndItemId(
@@ -32,6 +25,21 @@ class FavoritesRepository implements IFavoritesRepository {
     });
 
     return favorite;
+  }
+
+  public async findAllUserFilters(user_id: string): Promise<Filter[]> {
+    const favorites = await this.ormRepository
+      .createQueryBuilder('favorites')
+      .leftJoinAndSelect('favorites.item', 'item')
+      .leftJoinAndSelect('item.filters', 'filters')
+      .where('favorites.user_id = :user_id', { user_id })
+      .getMany();
+
+    const filters = favorites.reduce((acc, favorite) => {
+      acc = [...acc, ...favorite.item.filters];
+      return acc;
+    }, [] as Filter[]);
+    return filters;
   }
 
   public async create(favoriteData: ICreateFavoriteDTO): Promise<Favorite> {

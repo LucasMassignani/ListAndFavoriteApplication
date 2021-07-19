@@ -4,15 +4,15 @@ import { Button, Pagination } from 'antd';
 import qs from 'qs';
 
 import CardList from '../../components/CardList';
-import ArtInstituteChicagoApi from '../../externalApis/ArtInstituteChicagoApi';
 import IItem from '../../externalApis/interfaces/IItem';
-import { Container, CustomAlert, FilterContainer } from './styles';
+import { Container, FilterContainer } from './styles';
 import Filter from '../../components/Filter';
 import IDynamicFilter from '../../externalApis/interfaces/IDynamicFilter';
 import IFilterValue from '../../externalApis/interfaces/IFilterValue';
 import { toast } from 'react-toastify';
+import StoreApi from '../../externalApis/StoreApi';
 
-const ChicagoArtwork: React.FC = () => {
+const Store: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
 
@@ -20,7 +20,7 @@ const ChicagoArtwork: React.FC = () => {
   const [listFilterValue, setListFilterValue] = useState<IFilterValue[]>([]);
   const [dynamicFilter, setDynamicFilter] = useState<IDynamicFilter>({});
   const [loading, setLoading] = useState(true);
-  const [totalPages, setTotalPages] = useState<number>(24);
+  const [total, setTotal] = useState<number>(1);
   const [page, setPage] = useState<number>(0);
   const [itemList, setItemList] = useState<IItem[]>([]);
 
@@ -39,27 +39,27 @@ const ChicagoArtwork: React.FC = () => {
   }, [location.search]);
 
   useEffect(() => {
-    async function findArtwork(): Promise<void> {
+    async function findStoreItems(): Promise<void> {
       try {
-        const response = await ArtInstituteChicagoApi.getItemList({
-          limit: 21,
+        const response = await StoreApi.getItemList({
+          limit: 6,
           page,
           listFilterValue,
         });
         setItemList(response.list);
         setDynamicFilter(response.filter);
-        setTotalPages(response.totalPages);
+        setTotal(response.totalRegisters);
         setLoading(false);
       } catch (error) {
         setItemList([]);
         setDynamicFilter({});
-        setTotalPages(0);
+        setTotal(0);
         setLoading(false);
-        toast.error('Error trying to get the artworks!');
+        toast.error('Error trying to get the store items!');
       }
     }
 
-    findArtwork();
+    findStoreItems();
   }, [listFilterValue, page]);
 
   const handleChangePagination = useCallback(
@@ -67,7 +67,7 @@ const ChicagoArtwork: React.FC = () => {
       setLoading(true);
       setItemList([]);
       history.push({
-        pathname: '/art-institute-chicago',
+        pathname: '/store',
         search: `?page=${pageNumber}&listFilterValue=${JSON.stringify(
           listFilterValue,
         )}`,
@@ -90,7 +90,7 @@ const ChicagoArtwork: React.FC = () => {
       setItemList([]);
       setFilterVisible(false);
       history.push({
-        pathname: '/art-institute-chicago',
+        pathname: '/store',
         search: `?page=${1}&listFilterValue=${JSON.stringify(data)}`,
       });
     },
@@ -102,20 +102,13 @@ const ChicagoArtwork: React.FC = () => {
     setItemList([]);
     setFilterVisible(false);
     history.push({
-      pathname: '/art-institute-chicago',
+      pathname: '/store',
       search: `?page=${1}`,
     });
   }, [history]);
 
   return (
     <Container>
-      {page === 24 && totalPages > 24 && (
-        <CustomAlert
-          onClick={handleClickFilter}
-          message="Want to see more artworks? Try to add a filter!"
-          type="info"
-        />
-      )}
       <FilterContainer>
         <Button disabled={loading} type="primary" onClick={handleClickFilter}>
           Filter
@@ -128,11 +121,7 @@ const ChicagoArtwork: React.FC = () => {
         onSubmit={handleSubmitFilter}
         onClear={handleClear}
       />
-      <CardList
-        title="Art Institute of Chicago"
-        loading={loading}
-        itemList={itemList}
-      />
+      <CardList title="Store" loading={loading} itemList={itemList} />
 
       <Pagination
         showQuickJumper
@@ -141,12 +130,12 @@ const ChicagoArtwork: React.FC = () => {
         showSizeChanger={false}
         defaultCurrent={1}
         current={page}
-        pageSize={21}
-        total={totalPages > 24 ? 504 : totalPages * 21}
+        pageSize={6}
+        total={total}
         onChange={handleChangePagination}
       />
     </Container>
   );
 };
 
-export default ChicagoArtwork;
+export default Store;

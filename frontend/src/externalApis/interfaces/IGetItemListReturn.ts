@@ -5,4 +5,5 @@ export default interface IGetItemListReturn {
   filter: IDynamicFilter;
   list: IItem[];
   totalPages: number;
+  totalRegisters: number;
 }

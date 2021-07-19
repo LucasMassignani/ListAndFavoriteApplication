@@ -28,6 +28,10 @@ export const DetailsButton = styled.button`
   &:active {
     background-color: #096dd9;
   }
+
+  &:disabled {
+    background-color: #1890ff66;
+  }
 `;
 
 export const FavoriteButton = styled.button`
@@ -44,5 +48,8 @@ export const FavoriteButton = styled.button`
 
   &:active {
     background-color: #b12727;
+  }
+  &:disabled {
+    background-color: #d43a3a66;
   }
 `;

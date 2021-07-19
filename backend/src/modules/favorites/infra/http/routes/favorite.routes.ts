@@ -9,7 +9,17 @@ const favoritesController = new FavoritesController();
 
 favoritesRouter.use(ensureAuthenticated);
 
-favoritesRouter.get('/', favoritesController.index);
+favoritesRouter.get(
+  '/',
+  celebrate({
+    [Segments.QUERY]: {
+      limit: Joi.number().required(),
+      page: Joi.number().required(),
+      listFilterValue: Joi.any(),
+    },
+  }),
+  favoritesController.index,
+);
 
 favoritesRouter.post(
   '/',
@@ -22,6 +32,14 @@ favoritesRouter.post(
         image_url: Joi.string().required(),
         image_preview: Joi.string().allow(''),
       }).required(),
+      filters: Joi.array()
+        .items(
+          Joi.object({
+            name: Joi.string().required(),
+            value: Joi.string().required(),
+          }),
+        )
+        .required(),
     },
   }),
   favoritesController.create,

@@ -1,15 +1,22 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
-import ListFavoritesService from '@modules/favorites/services/ListFavoritesService';
+import ListFavoritesService from '@modules/favorites/services/ListFavoriteItemsService';
 import CreateFavoriteService from '@modules/favorites/services/CreateFavoriteService';
 import DeleteFavoriteService from '@modules/favorites/services/DeleteFavoriteService';
 
 export default class FavoritesController {
   public async index(request: Request, response: Response): Promise<Response> {
+    const { page, limit, listFilterValue } = request.query as any;
+
     const listFavoritesService = container.resolve(ListFavoritesService);
     const favorites = await listFavoritesService.execute({
       user_id: request.user.id,
+      page,
+      limit,
+      listFilterValue: listFilterValue
+        ? JSON.parse(listFilterValue)
+        : undefined,
     });
     return response.json(favorites);
   }
@@ -19,6 +26,7 @@ export default class FavoritesController {
     const favorites = await createFavoriteService.execute({
       user_id: request.user.id,
       item: request.body.item,
+      filters: request.body.filters,
     });
     return response.json(favorites);
   }

@@ -11,6 +11,9 @@ import IItem from '../../externalApis/interfaces/IItem';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
 import useAuth from '../../hooks/auth/useAuth';
+import ArtInstituteChicagoApi from '../../externalApis/ArtInstituteChicagoApi';
+import IFilter from '../../externalApis/interfaces/IFilter';
+import StoreApi from '../../externalApis/StoreApi';
 
 interface ICard {
   item: IItem;
@@ -27,6 +30,7 @@ const DEFAULT_PREVIEW_IMAGE =
 
 const Card: React.FC<ICard> = ({ item }) => {
   const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
   const [favorite, setFavorite] = useState<IFavorite | null>(null);
 
   useEffect(() => {
@@ -37,11 +41,13 @@ const Card: React.FC<ICard> = ({ item }) => {
             `favorite-check/${item.original_id}/${item.api_type}`,
           );
           setFavorite(response.data || null);
+          setLoading(false);
         } catch (error) {
           if (error.response && error.response.message) {
             toast.error(error.response.message);
           }
           setFavorite(null);
+          setLoading(false);
         }
       }
     }
@@ -49,8 +55,15 @@ const Card: React.FC<ICard> = ({ item }) => {
   }, [item.api_type, item.original_id, user]);
 
   const handleClickFavorite = useCallback(async () => {
+    setLoading(true);
     try {
       if (!favorite?.item_id) {
+        let filters: IFilter[] = [];
+        if (item.api_type === ArtInstituteChicagoApi.getApiType()) {
+          filters = await ArtInstituteChicagoApi.getFilterFromItem(item);
+        } else if (item.api_type === StoreApi.getApiType()) {
+          filters = await StoreApi.getFilterFromItem(item);
+        }
         const response = await api.post('favorites', {
           item: {
             api_type: item.api_type,
@@ -59,18 +72,21 @@ const Card: React.FC<ICard> = ({ item }) => {
             original_id: item.original_id,
             title: item.title,
           },
+          filters,
         });
         setFavorite(response.data);
       } else {
         await api.delete(`favorites/${favorite.item_id}`);
         setFavorite(null);
       }
+      setLoading(false);
     } catch (error) {
       if (error.response && error.response.message) {
         toast.error(error.response.message);
       } else {
         toast.error('Erro trying to add or remove item from favorite!');
       }
+      setLoading(false);
     }
   }, [favorite, item]);
 
@@ -92,8 +108,8 @@ const Card: React.FC<ICard> = ({ item }) => {
         }
       />
       <ButtonContainer>
-        <DetailsButton>Details</DetailsButton>
-        <FavoriteButton onClick={handleClickFavorite}>
+        <DetailsButton disabled={loading}>Details</DetailsButton>
+        <FavoriteButton onClick={handleClickFavorite} disabled={loading}>
           {favorite ? 'Unfavorite' : 'Favorite'}
         </FavoriteButton>
       </ButtonContainer>

@@ -1,7 +1,8 @@
 import axios, { AxiosInstance } from 'axios';
 import lodash from 'lodash';
-import IArtworkApi from '../interfaces/IArtworkApi';
+import IItemApi from '../interfaces/IItemApi';
 import IDynamicFilter from '../interfaces/IDynamicFilter';
+import IFilter from '../interfaces/IFilter';
 import IGetItemListReturn from '../interfaces/IGetItemListReturn';
 import IItem from '../interfaces/IItem';
 import IOptions from '../interfaces/IOptions';
@@ -9,6 +10,7 @@ import IOptions from '../interfaces/IOptions';
 interface IArtInstituteChicagoArtworkSearch {
   pagination: {
     total_pages: number;
+    total: number;
   };
   data: Array<{
     api_link: string;
@@ -17,6 +19,7 @@ interface IArtInstituteChicagoArtworkSearch {
 
 interface IArtInstituteChicagoItem {
   data: {
+    id: string;
     title: string;
     image_id: string;
     thumbnail: {
@@ -25,6 +28,10 @@ interface IArtInstituteChicagoItem {
     term_titles: string[];
     classification_titles: string[];
     material_titles: string[];
+
+    is_public_domain: boolean;
+    has_educational_resources: boolean;
+    has_not_been_viewed_much: boolean;
   };
 }
 
@@ -50,7 +57,7 @@ interface ISort {
   [key: string]: 'asc' | 'desc';
 }
 
-class ArtInstituteChicagoApi implements IArtworkApi {
+class ArtInstituteChicagoApi implements IItemApi {
   private api: AxiosInstance;
   public apiType: string;
 
@@ -61,7 +68,7 @@ class ArtInstituteChicagoApi implements IArtworkApi {
     this.apiType = 'ArtInstituteChicagoApi';
   }
 
-  private getDynamicFilter(): IDynamicFilter {
+  public getDynamicFilter(): IDynamicFilter {
     return {
       sort: {
         name: 'sort',
@@ -116,6 +123,36 @@ class ArtInstituteChicagoApi implements IArtworkApi {
         recommendedOptions: [],
       },
     };
+  }
+
+  public async getFilterFromItem(item: IItem): Promise<IFilter[]> {
+    const response = await this.api.get<IArtInstituteChicagoItem>(
+      `artworks/${item.original_id}`,
+    );
+
+    const dynamicFilters = this.getDynamicFilter();
+
+    const filters: IFilter[] = [];
+    Object.keys(dynamicFilters).forEach((key: any) => {
+      const dynamicFilter = dynamicFilters[key];
+      const data: any = response.data.data;
+      console.log(data);
+      if (dynamicFilter.type === 'bool') {
+        filters.push({
+          name: dynamicFilter.name,
+          value: String(data[key]),
+        });
+      } else if (dynamicFilter.type === 'textList') {
+        data[key].forEach((value: string) => {
+          filters.push({
+            name: dynamicFilter.name,
+            value: String(value),
+          });
+        });
+      }
+    });
+
+    return filters;
   }
 
   public async getItemList({
@@ -220,7 +257,7 @@ class ArtInstituteChicagoApi implements IArtworkApi {
           }
 
           return {
-            original_id: artwork.data.image_id,
+            original_id: String(artwork.data.id),
             title: artwork.data.title,
             image_url: `https://www.artic.edu/iiif/2/${artwork.data.image_id}/full/843,/0/default.jpg`,
             image_preview: artwork.data?.thumbnail?.lqip || '',
@@ -251,7 +288,12 @@ class ArtInstituteChicagoApi implements IArtworkApi {
       filter: dynamicFilter,
       list: itemList,
       totalPages: response.data.pagination.total_pages,
+      totalRegisters: response.data.pagination.total,
     };
+  }
+
+  public getApiType(): string {
+    return this.apiType;
   }
 }
 

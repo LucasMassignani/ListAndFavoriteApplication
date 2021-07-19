@@ -1,8 +1,6 @@
-import IBool from './FilterTypes/IBool';
-import ISort from './FilterTypes/ISort';
-import ITextList from './FilterTypes/ITextList';
+import IAllFilterTypes from './FilterTypes/IAllFiltersTypes';
 
 export default interface IFilterValue {
-  filter: IBool | ITextList | ISort;
+  filter: IAllFilterTypes;
   value: any;
 }

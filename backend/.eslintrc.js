@@ -21,6 +21,7 @@ module.exports = {
     'class-methods-use-this': 'off',
     'no-useless-constructor': 'off',
     'no-duplicate-imports': 'error',
+    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/naming-convention': [
       'error',
       {

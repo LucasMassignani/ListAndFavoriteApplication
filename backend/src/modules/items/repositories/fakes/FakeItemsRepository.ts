@@ -5,6 +5,7 @@ import ICreateItemDTO from '@modules/items/dtos/ICreateItemDTO';
 
 import Item from '../../infra/typeorm/entities/Item';
 import IItemDTO from '@modules/items/dtos/IItemDTO';
+import IFindAllUserFavoriteItemsDTO from '@modules/items/dtos/IFindAllUserFavoriteItemsDTO';
 
 class FakeItemsRepository implements IItemsRepository {
   private items: Item[] = [];
@@ -23,6 +24,15 @@ class FakeItemsRepository implements IItemsRepository {
     );
 
     return findItem;
+  }
+
+  public async findAllUserFavoriteItems(): Promise<IFindAllUserFavoriteItemsDTO> {
+    return {
+      list: this.items,
+      pagination: {
+        totalRegisters: 1,
+      },
+    };
   }
 
   public async create(itemData: ICreateItemDTO): Promise<Item> {

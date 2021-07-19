@@ -23,7 +23,7 @@ const Layout: React.FC = ({ children }) => {
     <Container>
       <Header>
         <h1>
-          <Link to="/"> My Favorite Arts</Link>
+          <Link to="/"> My Favorite List</Link>
         </h1>
         {user ? (
           <UserButtonsContainer>
