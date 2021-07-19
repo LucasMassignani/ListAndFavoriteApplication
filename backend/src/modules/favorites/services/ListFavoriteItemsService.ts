@@ -10,7 +10,7 @@ interface IRequest {
 }
 
 @injectable()
-class ListFavoritesService {
+class ListFavoriteItemsService {
   constructor(
     @inject('ItemsRepository')
     private itemsRepository: IItemsRepository,
@@ -34,4 +34,4 @@ class ListFavoritesService {
   }
 }
 
-export default ListFavoritesService;
+export default ListFavoriteItemsService;

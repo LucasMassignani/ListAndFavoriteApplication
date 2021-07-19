@@ -13,7 +13,7 @@ interface IResponse {
 }
 
 @injectable()
-class ListFavoritesService {
+class ListFiltersService {
   constructor(
     @inject('FavoritesRepository')
     private favoritesRepository: IFavoritesRepository,
@@ -41,4 +41,4 @@ class ListFavoritesService {
   }
 }
 
-export default ListFavoritesService;
+export default ListFiltersService;

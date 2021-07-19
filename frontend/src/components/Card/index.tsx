@@ -14,6 +14,8 @@ import useAuth from '../../hooks/auth/useAuth';
 import ArtInstituteChicagoApi from '../../externalApis/ArtInstituteChicagoApi';
 import IFilter from '../../externalApis/interfaces/IFilter';
 import StoreApi from '../../externalApis/StoreApi';
+import CardDetail from '../CardDetail';
+import IDynamicFilter from '../../externalApis/interfaces/IDynamicFilter';
 
 interface ICard {
   item: IItem;
@@ -31,7 +33,35 @@ const DEFAULT_PREVIEW_IMAGE =
 const Card: React.FC<ICard> = ({ item }) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [detailsVisible, setDetailsVisible] = useState(false);
   const [favorite, setFavorite] = useState<IFavorite | null>(null);
+  const [dynamicFilters, setDynamicFilters] = useState<IDynamicFilter | null>(
+    null,
+  );
+  const [filters, setFilters] = useState<IFilter[]>([]);
+
+  useEffect(() => {
+    async function findFilters(): Promise<void> {
+      try {
+        let newFilters: IFilter[] = [];
+        let newDynamicFilters: IDynamicFilter | null = null;
+
+        if (item.api_type === ArtInstituteChicagoApi.getApiType()) {
+          newFilters = await ArtInstituteChicagoApi.getFilterFromItem(item);
+          newDynamicFilters = await ArtInstituteChicagoApi.getDynamicFilter();
+        } else if (item.api_type === StoreApi.getApiType()) {
+          newFilters = await StoreApi.getFilterFromItem(item);
+          newDynamicFilters = await StoreApi.getDynamicFilter();
+        }
+        setFilters(newFilters);
+        setDynamicFilters(newDynamicFilters);
+      } catch (error) {
+        toast.error('Error trying to find the filters');
+      }
+    }
+
+    findFilters();
+  }, [item]);
 
   useEffect(() => {
     async function checkIfIsFavorite(): Promise<void> {
@@ -59,6 +89,7 @@ const Card: React.FC<ICard> = ({ item }) => {
     try {
       if (!favorite?.item_id) {
         let filters: IFilter[] = [];
+
         if (item.api_type === ArtInstituteChicagoApi.getApiType()) {
           filters = await ArtInstituteChicagoApi.getFilterFromItem(item);
         } else if (item.api_type === StoreApi.getApiType()) {
@@ -90,6 +121,14 @@ const Card: React.FC<ICard> = ({ item }) => {
     }
   }, [favorite, item]);
 
+  const handleClickDetails = useCallback(() => {
+    setDetailsVisible(true);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setDetailsVisible(false);
+  }, []);
+
   return (
     <Container>
       <Image
@@ -108,11 +147,22 @@ const Card: React.FC<ICard> = ({ item }) => {
         }
       />
       <ButtonContainer>
-        <DetailsButton disabled={loading}>Details</DetailsButton>
+        <DetailsButton onClick={handleClickDetails} disabled={loading}>
+          Details
+        </DetailsButton>
         <FavoriteButton onClick={handleClickFavorite} disabled={loading}>
           {favorite ? 'Unfavorite' : 'Favorite'}
         </FavoriteButton>
       </ButtonContainer>
+      {dynamicFilters && (
+        <CardDetail
+          item={item}
+          dynamicFilter={dynamicFilters}
+          filters={filters}
+          onClose={handleClose}
+          visible={detailsVisible}
+        />
+      )}
     </Container>
   );
 };

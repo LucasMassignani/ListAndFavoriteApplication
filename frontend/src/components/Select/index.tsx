@@ -7,12 +7,13 @@ const { Option } = SelectAnt;
 
 interface ISelectInput {
   filter: ISort | ISelect;
+  disabled?: boolean;
 }
 
-const Select: React.FC<ISelectInput> = ({ filter }) => {
+const Select: React.FC<ISelectInput> = ({ filter, disabled = false }) => {
   return (
     <Form.Item name={filter.name} label={filter.label}>
-      <SelectAnt>
+      <SelectAnt disabled={disabled}>
         {filter.options.map((option) => {
           return (
             <Option key={option.value} value={option.value}>

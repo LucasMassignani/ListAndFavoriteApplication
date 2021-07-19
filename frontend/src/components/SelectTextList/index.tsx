@@ -6,12 +6,13 @@ const { Option } = Select;
 
 interface ISelectTextList {
   filter: ITextList;
+  disabled?: boolean;
 }
 
-const SelectTextList: React.FC<ISelectTextList> = ({ filter }) => {
+const SelectTextList: React.FC<ISelectTextList> = ({ filter, disabled }) => {
   return (
     <Form.Item name={filter.name} label={filter.label}>
-      <Select mode="tags">
+      <Select disabled={disabled} mode="tags">
         {filter.recommendedOptions.map((option) => {
           return (
             <Option key={option} value={option}>

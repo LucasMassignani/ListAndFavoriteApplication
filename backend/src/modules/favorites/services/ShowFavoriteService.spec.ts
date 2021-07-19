@@ -6,7 +6,7 @@ let fakeFavoritesRepository: FakeFavoritesRepository;
 let fakeItemsRepository: FakeItemsRepository;
 let showFavorite: ShowFavoriteService;
 
-describe('ShowFavoritesService', () => {
+describe('ShowFavoriteService', () => {
   beforeEach(() => {
     fakeFavoritesRepository = new FakeFavoritesRepository();
     fakeItemsRepository = new FakeItemsRepository();

@@ -5,6 +5,7 @@ import ICreateFavoriteDTO from '@modules/favorites/dtos/ICreateFavoriteDTO';
 
 import Favorite from '../../infra/typeorm/entities/Favorite';
 import Filter from '@modules/filters/infra/typeorm/entities/Filter';
+
 class FakeFavoritesRepository implements IFavoritesRepository {
   private favorites: Favorite[] = [];
 

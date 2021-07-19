@@ -18,7 +18,7 @@ interface IRequest {
 }
 
 @injectable()
-class CreateUserService {
+class CreateFavoriteService {
   constructor(
     @inject('FavoritesRepository')
     private favoritesRepository: IFavoritesRepository,
@@ -61,4 +61,4 @@ class CreateUserService {
   }
 }
 
-export default CreateUserService;
+export default CreateFavoriteService;

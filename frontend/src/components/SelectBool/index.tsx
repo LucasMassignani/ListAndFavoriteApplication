@@ -6,12 +6,13 @@ const { Option } = Select;
 
 interface ISelectBool {
   filter: IBool;
+  disabled?: boolean;
 }
 
-const SelectBool: React.FC<ISelectBool> = ({ filter }) => {
+const SelectBool: React.FC<ISelectBool> = ({ filter, disabled = false }) => {
   return (
     <Form.Item name={filter.name} label={filter.label}>
-      <Select>
+      <Select disabled={disabled}>
         <Option value="both">Both</Option>
         <Option value="true">Yes</Option>
         <Option value="false">No</Option>
