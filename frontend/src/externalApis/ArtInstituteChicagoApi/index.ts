@@ -136,7 +136,6 @@ class ArtInstituteChicagoApi implements IItemApi {
     Object.keys(dynamicFilters).forEach((key: any) => {
       const dynamicFilter = dynamicFilters[key];
       const data: any = response.data.data;
-      console.log(data);
       if (dynamicFilter.type === 'bool') {
         filters.push({
           name: dynamicFilter.name,

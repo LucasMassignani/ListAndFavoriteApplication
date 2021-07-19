@@ -69,9 +69,6 @@ const CardDetail: React.FC<ICardDetail> = ({
               );
             }
 
-            console.error(
-              'Invalid type for dynamicFilter. Check this externalApi dynamicFilter!',
-            );
             return <React.Fragment key={key} />;
           })}
         </Row>
